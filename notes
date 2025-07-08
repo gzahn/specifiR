@@ -1,0 +1,25 @@
+
+# Main steps
+
+  1. recreate output from PC-ORD indicator analysis
+    - calculate indicator values
+      (relabund * fidelity * 100)
+    - identify max indicator value for each taxon (IVmax)
+    - randomization test (probability of IVmax >= found in randomized data)
+    - quantify taxon-level specificity (1 - pvalue)
+  2. identify threshold for removing rare taxa
+    - how can we automate this?
+    - or allow user choice of thresholds?
+  3. community weighted mean
+
+
+# Action items:
+
+  - Abbey will send data and current code
+  - I will run through the workflow and:
+    - identify which functions we need
+    - figure out parameters/variables for them
+    - build a shell of the package on GitHub (add Abbey as contributor)
+  - We then need to try it out with other data to find the breaking points
+  - What will users want to do differently? (give them the flexibility)
+  -
