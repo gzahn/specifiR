@@ -4,7 +4,7 @@
 
 # dependencies
 library(indicspecies)
-
+library(tidyverse)
 # example data
 # A data frame with 41 sites (rows) and 33 species (columns).
 # Abundance values are represented in abundance classes.
@@ -44,6 +44,39 @@ indval$comb
 # looks like we want '$sign' ???
 out <- indval[['sign']]
 out$stat
+
+# TRY WITH ABBEY'S DATA ####
+
+# load data
+otu <- read_csv("./sandbox/otu_low.csv")
+names(otu)[1] <- "sample"
+isa <- read_csv("./sandbox/isa_low.csv")
+names(isa)[1] <- "otu"
+# get group vector
+groups2 <- otu$sample %>% substr(1,1)
+# remove sample column from otu table for now
+otu$sample <- NULL
+
+# try multipatt() on this data set
+indval2 <- multipatt(otu, groups2,
+                    control = how(nperm=99)) # speed up w/ low permutations
+
+# inspect
+indval2$sign
+dim(indval2$sign)
+dim(otu)
+# ...seems to work!
+indval2$sign %>%
+  dplyr::filter(!is.na(p.value)) %>%
+  dim
+
+#
+
+
+
+
+
+
 
 
 # MULTIPATT FUNCTION ####
