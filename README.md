@@ -27,4 +27,10 @@ Depends on:
 - future >= 1.33.2
 - future.apply >= 1.11.2
 
+## Citation
+
+(Link to publication)
+
+
+
 ## Example usage

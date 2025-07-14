@@ -1,10 +1,14 @@
 # trial of functions
 
 # load dependencies
-devtools::install_github("gzahn/specifiR")
 library(tidyverse)
+
+
+if (!requireNamespace("specifiR", quietly = TRUE)){
+  devtools::install_github("gzahn/specifiR")
+}
+
 library(specifiR)
-packageVersion("tidyverse")
 
 # LOAD DATA ####
 otu <- readRDS("./sandbox/soils_otu_low_24.rds")
