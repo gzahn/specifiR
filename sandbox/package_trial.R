@@ -1,13 +1,14 @@
 # trial of functions
 
-# load dependencies
+# load dependencies (for this script)
 library(tidyverse)
 
-
+# install specifiR if not already installed
 if (!requireNamespace("specifiR", quietly = TRUE)){
   devtools::install_github("gzahn/specifiR")
 }
 
+# load specifiR
 library(specifiR)
 
 # LOAD DATA ####

@@ -4,7 +4,7 @@ Title: Quantifying Host Specificity of Microbial Community Members
 Version: 0.1.0
 Authors: Geoff Zahn & Abigail Neat
 Maintainer: The package maintainer <zahn.ecology@gmail.com>
-Description: This method can be used to compare the specificity of whole microbial communities associated with groups.
+Description: This method can be used to compare the specificity of whole communities associated with groups.
     Groups can include hosts, genotypes, environments, treatments, etc.
 License: MIT
 Encoding: UTF-8
