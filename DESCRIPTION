@@ -2,18 +2,8 @@ Package: specifiR
 Type: Package
 Title: Quantifying Host Specificity of Microbial Community Members
 Version: 0.1.0
-Authors@R: c(
-    person(
-      "Abigail", "Neat",
-      email = "neata@osu.edu",
-      role = c("aut", "cre")
-    )
-    person(
-      "Geoff","Zahn"
-      email = "gzahn@wm.edu",
-      role = c("aut","cre")
-    )
-  )
+Authors: Geoff Zahn & Abigail Neat
+Maintainer: The package maintainer <zahn.ecology@gmail.com>
 Description: This method can be used to compare the specificity of whole microbial communities associated with groups.
     Groups can include hosts, genotypes, environments, treatments, etc.
 License: MIT
