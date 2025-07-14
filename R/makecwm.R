@@ -1,4 +1,4 @@
-#' Community-weighted means (CWM)
+#' Community-weighted means (CWM) taken from the `ecole` package
 #'
 #' Community-weighted means traits matrix (SU x traits)
 #'

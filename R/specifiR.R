@@ -1,0 +1,270 @@
+#' Quantify group specificity of entire communities for each sample
+#'
+#' Abbey describe what the method does
+#' Subsequence lines for long description
+#'
+#'
+#' @import tidyr
+#' @import magrittr
+#' @import purrr
+#' @import dplyr
+#' @import future
+#' @import future.apply
+#'
+#' @param comm Data frame. Data frame (or coercible to "data.frame") of community abundance values. Rows are samples, columns are taxa. Values are raw observation numbers.
+#' @param groups Character. Vector of grouping levels. Must be same length as number of samples (rows) of comm.
+#' @param seed Numeric of length 1. Random seed for reproducibility. Default = 666.
+#' @param n.perm Positive numeric (integer) of length 1. Number of permutations for Monte Carlo permutation test. Default = 999.
+#' @param pval.cutoff Positive numeric of length 1, between 0 and 1. The P-value cutoff for significance. Default = 0.05.
+#' @param max.ratio The maximum ratio of significant:insignificant P-values within a group to indicate removal. Taxa with fidelity to groups at or less than this value will be removed. Only the first N occurence groups that have this value or lower will be flagged for taxon removal. Default = 0. You are unlikely to want to change this value.
+#'
+#' @return Named List. This returns a list with 3 data frame elements: community_specificity_index = The main result showing community weighted mean indicator values for each sample; taxon_specificity_index = Intermediate result (`comm_name` `iv.max` `p.value` `occurrence` `occurrence_groups` `taxon_index`); isa_results = Intermediate results. taxon-level indicator species analysis with each given group level, and the indicator results for each taxon.
+#'
+#' @details
+#' This function implements the "Community Weighted Mean Indicator" Analysis for quantifying group specificity of entire communities.
+#'
+#'
+#' @examples
+#' # make mock community and grouping data
+#' comm_matrix <- matrix(rpois(30 * 100, lambda = 5),nrow = 30,ncol = 100)
+#' colnames(comm_matrix) <- paste0("taxon.", 1:100)
+#' comm_df <- as.data.frame(comm_matrix)
+#' groups <- factor(rep(paste0("Group", 1:3), length.out = 100))
+#'
+#' # run specifiR with default settings
+#' out <- specifiR(comm = comm_df, groups = groups)
+#' out$community_specificity_index
+#'
+#' @export
+
+specifiR <-
+  function(comm,
+           groups,
+           seed=666,
+           n.perm=999,
+           pval.cutoff=0.05,
+           max.ratio=0){
+
+  # TESTS ####
+
+  # all packages available in namespace
+  library(tidyverse)
+  library(future)
+  library(future.apply)
+
+  # cross-platform parallelism
+  plan(multisession)
+
+  # helper operator
+  '%ni%' <- Negate("%in%")
+
+
+  # class(groups) == "character"
+  if(class(groups) != "character"){
+    groups <- as.character(groups)
+    warning("Grouping variable converted to character class.")
+  }
+  # class(comm) == "data.frame" (or coercible to 'data.frame')f
+  # try to convert comm to data.frame
+  comm <- as(comm,"data.frame")
+  if(class(comm) != "data.frame"){
+    stop("Community matrix must be coercible to a data.frame object.")
+  }
+  # length(groups) == nrow(comm)
+  if(length(groups) != nrow(comm)){
+    stop("Grouping vector is not the same length as community matrix. Community matrix must be in the format: rows=samples, cols=taxa")
+  }
+  # is.numeric(seed)
+  if(!is.numeric(seed) | length(seed) != 1){
+    stop("Random seed must be a single numeric value.")
+  }
+  # is.numeric(n.perm) & n.perm > 1
+  if(!is.numeric(n.perm) | n.perm <= 1 | length(n.perm) != 1){
+    stop("Number of permutations must be a positive integer greater than 1.")
+  }
+  # is.numeric(pval.cutoff) & pval.cutoff >=0 & pval.cutoff <= 1
+  if(!is.numeric(pval.cutoff) | pval.cutoff < 0 | pval.cutoff > 1){
+    stop("P-value cutoff must be a single number between 0 and 1.")
+  }
+  # is.numeric(max.ratio) & max.ratio >=0 & max.ratio <= 1
+  if(!is.numeric(max.ratio) | max.ratio < 0 | max.ratio > 1){
+    stop("Max ratio must be a single positive number between 0 and 1.")
+  }
+
+
+  # CALCULATE INDICATOR SPECIES RESULTS ####
+
+  # This is a re-engineering of the PC-ORD indicator species analysis
+
+  ## Step 1. Calculate relative abundance of each taxon in each group ####
+  comm_sums <- colSums(comm)
+  group_sums <- data.frame(comm_name = colnames(comm))
+  comm$group <- groups
+
+  # for-loop to get relabund of each taxon for each grouping level
+
+  for(i in unique(groups)){
+    comm_subset <- comm %>% dplyr::filter(group %in% i)
+    comm_subset$group <- NULL
+    comm_sums <- colSums(comm_subset)
+    group_sums[[i]] <- comm_sums
+  }
+
+  df_rel_abund <- group_sums %>%
+    rowwise() %>%
+    mutate(across(where(is.numeric), ~ .x / sum(c_across(where(is.numeric))))) %>%
+    ungroup()
+
+  ## Step 2. calculate fidelity ####
+  # proportion of samples within a given group that each taxon is found in
+
+  # divide up by group
+  # count number of samples in each group
+  # count number of samples within each group that a given taxon is present
+  # divide for proportion
+
+  # make presence-absence comm table
+  comm_pa <-
+    comm %>%
+    mutate(across(where(is.numeric), ~ if_else(.x > 0, 1, 0)))
+
+  group_fidelity <- data.frame(comm_name = colnames(comm_pa %>% dplyr::select(-group)))
+
+  for(i in unique(groups)){
+    comm_subset <- comm_pa %>% dplyr::filter(group %in% i)
+    comm_subset$group <- NULL
+    comm_sums <- colSums(comm_subset)
+    group_fidelity[[i]] <- comm_sums / nrow(comm_subset)
+  }
+
+  ## Step 3. multiply group_sums by group_fidelity ####
+
+  # make matrices and add row names
+  group_sum_mat <- as.matrix(df_rel_abund %>% dplyr::select(-comm_name))
+  row.names(group_sum_mat) <- group_sums$comm_name
+  group_fidelity_mat <- as.matrix(group_fidelity %>% dplyr::select(-comm_name))
+  row.names(group_fidelity_mat) <- group_fidelity$comm_name
+
+  # multiply matrices
+  indicator_values <- group_sum_mat * group_fidelity_mat
+  indicator_values <- indicator_values * 100
+
+  # step 4. identify the highest indicator value (iv.max)
+  # of the N columns, get the biggest one
+  # for package, return both of these matrices (optional)
+
+
+  iv.max <-
+    indicator_values %>%
+    apply(1, max)
+  # make data frame with all indicator values and iv.max
+  indicator_values <- bind_cols(indicator_values,iv.max=iv.max)
+  # add back comm names
+  indicator_values$comm_name <- names(iv.max)
+
+  ## Step 4. monte carlo permutations ####
+
+  # Precompute matrices
+  comm_numeric <- comm %>% dplyr::select(where(is.numeric))
+  comm_matrix <- as.matrix(comm_numeric)
+  comm_pa <- (comm_matrix > 0) * 1
+  sample_groups <- groups
+  group_levels <- unique(sample_groups)
+
+
+  # Function to compute iv.max from group labels
+  calc_ivmax <- function(shuffled_groups) {
+    group_sums <- sapply(group_levels, function(g) {
+      colSums(comm_matrix[shuffled_groups == g, , drop = FALSE])
+    })
+    group_sums_rel <- sweep(group_sums, 2, colSums(group_sums), "/")
+
+    group_fidels <- sapply(group_levels, function(g) {
+      colSums(comm_pa[shuffled_groups == g, , drop = FALSE]) / sum(shuffled_groups == g)
+    })
+
+    indval <- t(group_sums_rel * group_fidels) * 100
+    apply(indval, 2, max)
+  }
+
+  # Observed iv.max
+  iv.max_obs <- calc_ivmax(sample_groups)
+
+  # Permuted iv.max values
+  iv.max_perm <- future_replicate(n.perm, {
+    calc_ivmax(sample(sample_groups))
+  })
+
+  # Empirical p-values
+  iv.pval <- rowMeans(iv.max_perm >= iv.max_obs)
+
+  # Output result
+  indicator_results <- tibble(
+    comm_name = colnames(comm_matrix),
+    iv.max = iv.max_obs,
+    p.value = iv.pval
+  )
+
+
+  # PREP FOR CWM ####
+
+  ## convert to presence-absence ####
+  comm_pa <- comm %>% dplyr::select(-group)
+  comm_pa[comm_pa>0] <- 1
+
+  ## get occurrence values ####
+  indicator_results[["occurrence"]] <- colSums(comm_pa)
+
+  # REMOVE RARE TAXA ####
+
+  occurrence_groups <- factor(indicator_results[["occurrence"]])
+  indicator_results[["occurrence_groups"]] <- occurrence_groups
+
+  # make ratio dataframe that connects Nsites groups to ratio of sig/non-sig pvalues
+  ratio_df <-
+    indicator_results %>%
+    mutate(significant = p.value <= 0.05) %>%
+    group_by(occurrence_groups) %>%
+    summarize(ratio = sum(significant) / sum(!significant))
+
+  # find which taxa to remove (first N taxa at or below max.ratio)
+  first_consecutive <- function(x) {
+    if (length(x) <= 1) return(x)
+    diffs <- diff(x)
+    end <- which(diffs != 1)
+    if (length(end) == 0) return(x)
+    return(x[1:end[1]])
+  }
+
+  to_remove <- which(ratio_df$ratio <= max.ratio) %>% first_consecutive()
+  # subset indicator results
+  isa_subset <-
+    indicator_results %>%
+    dplyr::filter(occurrence %ni% to_remove)
+
+  # subset comm table to match
+  comm_subset <-
+    comm[,colnames(comm) %in% isa_subset$comm_name]
+
+
+  # calculate taxon index (so bigger indicates more indicative)
+  isa_subset$taxon_index <- 1 - isa_subset$p.value
+
+  # PERFORM CWM ANALYSIS ####
+  cwm <- makecwm(comm_subset, isa_subset[["taxon_index"]])
+
+  # clean it up to make a more usable object
+  output <- data.frame(sample_id = row.names(cwm),
+                       cwm = cwm[["V1"]])
+
+  # add taxon index to results
+  indicator_results$taxon_index <- 1 - indicator_results$p.value
+
+  # create output object (list)
+  out <- list(community_specificity_index = output,
+              taxon_specificity_index = indicator_results,
+              isa_results = indicator_values)
+
+  return(out)
+
+}
