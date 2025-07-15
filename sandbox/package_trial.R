@@ -13,10 +13,9 @@ if (!requireNamespace("specifiR", quietly = TRUE)){
 library(specifiR)
 
 # LOAD DATA ####
-otu <- readRDS("./sandbox/soils_otu_low_24.rds")
-groups <- readRDS("./sandbox/soils_env_low_24.rds") %>% pluck("species")
-ps <- readRDS("../Biocrust_MIP/data/physeq_18S_clean.RDS")
-
+otu <- readRDS("./data/soils_otu_low_24.rds")
+groups <- readRDS("./data/soils_env_low_24.rds") %>% pluck("species")
+ps <- readRDS("./data/example_physeq.RDS")
 
 # TRY FUNCTION ####
 out <- specifiR(comm = otu,
