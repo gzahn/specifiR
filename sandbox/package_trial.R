@@ -3,7 +3,7 @@
 # load dependencies (for this script)
 library(tidyverse)
 library(phyloseq)
-source("./R/specifiR_physeq.R")
+
 # install specifiR if not already installed
 if (!requireNamespace("specifiR", quietly = TRUE)){
   devtools::install_github("gzahn/specifiR")
@@ -24,7 +24,8 @@ out <- specifiR(comm = otu,
                 seed = 123,
                 n.perm = 99,
                 pval.cutoff = 0.05,
-                max.ratio = 0)
+                max.ratio = 0,
+                ovp.plot = TRUE)
 
 out$community_specificity_index
 out$taxon_specificity_index
@@ -32,5 +33,5 @@ out$isa_results
 
 
 # TRY PHYLOSEQ VERSION ####
-out2 <- specifiR_physeq(physeq = ps,groups = "depth",n.perm = 99)
+out2 <- specifiR_physeq(physeq = ps,groups = "depth",n.perm = 99,ovp.plot=TRUE)
 

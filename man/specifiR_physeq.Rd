@@ -10,7 +10,8 @@ specifiR_physeq(
   seed = 666,
   n.perm = 999,
   pval.cutoff = 0.05,
-  max.ratio = 0
+  max.ratio = 0,
+  ovp.plot = FALSE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ specifiR_physeq(
 \item{pval.cutoff}{Positive numeric of length 1, between 0 and 1. The P-value cutoff for significance. Default = 0.05.}
 
 \item{max.ratio}{The maximum ratio of significant:insignificant P-values within a group to indicate removal. Taxa with fidelity to groups at or less than this value will be removed. Only the first N occurence groups that have this value or lower will be flagged for taxon removal. Default = 0. You are unlikely to want to change this value.}
+
+\item{ovp.plot}{Logical. Should a plot of occupancy vs. p-values be generated? Default = FALSE.}
 }
 \value{
 Named List. This returns a list with 3 data frame elements: community_specificity_index = The main result showing community weighted mean indicator values for each sample; taxon_specificity_index = Intermediate result (`comm_name` `iv.max` `p.value` `occurrence` `occurrence_groups` `taxon_index`); isa_results = Intermediate results. taxon-level indicator species analysis with each given group level, and the indicator results for each taxon.
