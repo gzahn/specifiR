@@ -250,6 +250,7 @@ specifiR <-
 
   to_remove <- which(ratio_df$ratio <= max.ratio) %>% first_consecutive()
 
+  cat(paste0("Removed taxa present in ",max(to_remove)," sites or fewer."))
   # OPTIONAL OCCUPANCY VS P.VALUE PLOT ####
   if(ovp.plot){
     p <-

@@ -32,5 +32,5 @@ out$isa_results
 
 
 # TRY PHYLOSEQ VERSION ####
-out2 <- specifiR_physeq(physeq = ps,groups = "depth",n.perm = 99,ovp.plot=TRUE)
+out2 <- specifiR_physeq(physeq = ps,groups = "invasion",n.perm = 99,ovp.plot=TRUE)
 
