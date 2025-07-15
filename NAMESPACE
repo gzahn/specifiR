@@ -2,6 +2,7 @@
 
 export(makecwm)
 export(specifiR)
+export(specifiR_physeq)
 import(dplyr)
 import(future)
 import(future.apply)

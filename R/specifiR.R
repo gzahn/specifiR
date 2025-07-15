@@ -70,6 +70,14 @@ specifiR <-
   if(class(comm) != "data.frame"){
     stop("Community matrix must be coercible to a data.frame object.")
   }
+  # check that community data is raw counts
+  if(unique(rowSums(comm)) == 1){
+    warning("Looks like you have relative abundance data. Redo this with raw count data.")
+  }
+  if(max(comm) == 1){
+    warning("Looks like you have presence/absence data. Redo this with raw count data.")
+  }
+
   # length(groups) == nrow(comm)
   if(length(groups) != nrow(comm)){
     stop("Grouping vector is not the same length as community matrix. Community matrix must be in the format: rows=samples, cols=taxa")
