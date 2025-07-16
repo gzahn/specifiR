@@ -295,10 +295,21 @@ specifiR_physeq <-
     # add taxon index to results
     indicator_results$taxon_index <- 1 - indicator_results$p.value
 
+    process_summary <-
+      data.frame(n_samples_start=nrow(comm),
+                 n_samples_end=nrow(comm_subset),
+                 n_taxa_start=ncol(comm),
+                 n_taxa_end=ncol(comm_subset),
+                 n_raretaxa_removed=(ncol(comm) - ncol(comm_subset)),
+                 occurence_cutoff=max(to_remove),
+                 pval_cutoff=pval.cutoff,
+                 n_perm=n.perm)
+
     # create output object (list)
     out <- list(community_specificity_index = output,
                 taxon_specificity_index = indicator_results,
-                isa_results = indicator_values)
+                isa_results = indicator_values,
+                process_summary = process_summary)
 
     return(out)
 
