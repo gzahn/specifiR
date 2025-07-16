@@ -215,8 +215,8 @@ specifiR <-
     p.value = iv.pval
   )
 
-
-
+group_fidelity[1,]
+indicator_results[1,]
 
   # PREP FOR CWM ####
 
@@ -287,7 +287,8 @@ specifiR <-
 
   # clean it up to make a more usable object
   output <- data.frame(sample_id = row.names(cwm),
-                       cwm = cwm[["V1"]])
+                       cwm = cwm[["V1"]],
+                       group = groups)
 
   # add taxon index to results
   indicator_results$taxon_index <- 1 - indicator_results$p.value
@@ -309,6 +310,7 @@ specifiR <-
               taxon_specificity_index = indicator_results,
               isa_results = indicator_values,
               process_summary = process_summary)
+
 
   return(out)
 

@@ -29,8 +29,9 @@ out <- specifiR(comm = otu,
 out$community_specificity_index
 out$taxon_specificity_index
 out$isa_results
-
+out$process_summary
 
 # TRY PHYLOSEQ VERSION ####
 out2 <- specifiR_physeq(physeq = ps,groups = "invasion",n.perm = 99,ovp.plot=TRUE)
+out2$process_summary
 

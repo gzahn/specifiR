@@ -290,7 +290,8 @@ specifiR_physeq <-
 
     # clean it up to make a more usable object
     output <- data.frame(sample_id = row.names(cwm),
-                         cwm = cwm[["V1"]])
+                         cwm = cwm[["V1"]],
+                         group = groups)
 
     # add taxon index to results
     indicator_results$taxon_index <- 1 - indicator_results$p.value
