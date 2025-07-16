@@ -30,7 +30,12 @@ specifiR_physeq(
 \item{ovp.plot}{Logical. Should a plot of occupancy vs. p-values be generated? Default = FALSE.}
 }
 \value{
-Named List. This returns a list with 3 data frame elements: community_specificity_index = The main result showing community weighted mean indicator values for each sample; taxon_specificity_index = Intermediate result (`comm_name` `iv.max` `p.value` `occurrence` `occurrence_groups` `taxon_index`); isa_results = Intermediate results. taxon-level indicator species analysis with each given group level, and the indicator results for each taxon.
+Named List. This returns a list with 5 elements:
+community_specificity_index = The main result showing community weighted mean indicator values for each sample;
+taxon_specificity_index = Intermediate result (`comm_name` `iv.max` `p.value` `occurrence` `occurrence_groups` `taxon_index`);
+isa_results = Intermediate results. taxon-level indicator species analysis with each given group level, and the indicator results for each taxon;
+process_summary = Reports basic info on process, including the number of taxa removed due to rarity;
+removed_taxa = Character vector with names of taxa removed due to rarity.
 }
 \description{
 Abbey describe what the method does

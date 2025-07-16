@@ -30,8 +30,14 @@ out$community_specificity_index
 out$taxon_specificity_index
 out$isa_results
 out$process_summary
+out$removed_taxa
 
 # TRY PHYLOSEQ VERSION ####
 out2 <- specifiR_physeq(physeq = ps,groups = "invasion",n.perm = 99,ovp.plot=TRUE)
+
+out2$community_specificity_index
+out2$taxon_specificity_index
+out2$isa_results
 out2$process_summary
+out2$removed_taxa
 

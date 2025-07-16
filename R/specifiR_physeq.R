@@ -20,7 +20,12 @@
 #' @param max.ratio The maximum ratio of significant:insignificant P-values within a group to indicate removal. Taxa with fidelity to groups at or less than this value will be removed. Only the first N occurence groups that have this value or lower will be flagged for taxon removal. Default = 0. You are unlikely to want to change this value.
 #' @param ovp.plot Logical. Should a plot of occupancy vs. p-values be generated? Default = FALSE.
 #'
-#' @return Named List. This returns a list with 3 data frame elements: community_specificity_index = The main result showing community weighted mean indicator values for each sample; taxon_specificity_index = Intermediate result (`comm_name` `iv.max` `p.value` `occurrence` `occurrence_groups` `taxon_index`); isa_results = Intermediate results. taxon-level indicator species analysis with each given group level, and the indicator results for each taxon.
+#' @return Named List. This returns a list with 5 elements:
+#' community_specificity_index = The main result showing community weighted mean indicator values for each sample;
+#' taxon_specificity_index = Intermediate result (`comm_name` `iv.max` `p.value` `occurrence` `occurrence_groups` `taxon_index`);
+#' isa_results = Intermediate results. taxon-level indicator species analysis with each given group level, and the indicator results for each taxon;
+#' process_summary = Reports basic info on process, including the number of taxa removed due to rarity;
+#' removed_taxa = Character vector with names of taxa removed due to rarity.
 #'
 #' @details
 #' This function implements the "Community Weighted Mean Indicator" Analysis for quantifying group specificity of entire communities.
@@ -281,6 +286,10 @@ specifiR_physeq <-
     comm_subset <-
       comm[,colnames(comm) %in% isa_subset$comm_name]
 
+    # find taxa that were removed due to rarity
+    starting_taxa <- names(comm)[names(comm) != "group"]
+    removed_taxa <- starting_taxa[starting_taxa %ni% names(comm_subset)]
+
 
     # calculate taxon index (so bigger indicates more indicative)
     isa_subset$taxon_index <- 1 - isa_subset$p.value
@@ -310,7 +319,8 @@ specifiR_physeq <-
     out <- list(community_specificity_index = output,
                 taxon_specificity_index = indicator_results,
                 isa_results = indicator_values,
-                process_summary = process_summary)
+                process_summary = process_summary,
+                removed_taxa = removed_taxa)
 
     return(out)
 
