@@ -175,7 +175,7 @@ specifiR <-
   # make data frame with all indicator values and iv.max
   indicator_values <- bind_cols(indicator_values,iv.max=iv.max)
   # add back comm names
-  indicator_values$comm_name <- names(iv.max)
+  indicator_values$taxon <- names(iv.max)
 
   ## Step 4. monte carlo permutations ####
 
