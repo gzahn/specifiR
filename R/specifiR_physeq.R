@@ -80,6 +80,8 @@ specifiR_physeq <-
     # check if data appear to be rarefied
     if(length(unique(rowSums(comm))) == 1){
       warning("Are your data rarefied to a uniform sampling effort? This is not advisable. It is better to incorporate sampling effort (e.g., sequencing depth) as a model term, and not to throw away your data!")
+      warning("True rarefaction would require you to conduct the rarefaction step and all subsequent analyses repeatedly.")
+      message("If you want to rarefy, you will need to repeat this (and any other) analysis once for each rarefaction iteration. Consider using your actual raw data instead.")
     }
 
     # class(groups) == "character"
