@@ -78,11 +78,15 @@ specifiR <-
     stop("Community matrix must be coercible to a data.frame object.")
   }
   # check that community data is raw counts
-  if(unique(rowSums(comm)) == 1){
+  if(all(unique(rowSums(comm)) == 1)){
     warning("Looks like you have relative abundance data. Redo this with raw count data.")
   }
   if(max(comm) == 1){
     warning("Looks like you have presence/absence data. Redo this with raw count data.")
+  }
+  # check if data appear to be rarefied
+  if(length(unique(rowSums(comm))) == 1){
+    warning("Are your data rarefied to a uniform sampling effort? This is not advisable. It is better to incorporate sampling effort (e.g., sequencing depth) as a model term, and not to throw away your data!")
   }
 
   # length(groups) == nrow(comm)
@@ -240,7 +244,9 @@ specifiR <-
     indicator_results %>%
     mutate(significant = p.value <= 0.05) %>%
     group_by(occurrence_groups) %>%
-    summarize(ratio = sum(significant) / sum(!significant))
+    summarize(ratio = sum(significant) / sum(!significant),
+              n_sig = sum(significant),
+              n_insig = sum(!significant))
 
   # find which taxa to remove (first N taxa at or below max.ratio)
   first_consecutive <- function(x) {
