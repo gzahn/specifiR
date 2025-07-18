@@ -257,6 +257,10 @@ specifiR_physeq <-
                 n_sig = sum(significant),
                 n_insig = sum(!significant))
 
+    # deal with Inf values
+    # these are occurrence groups that have ONLY significant taxa
+    ratio_df$ratio[is.infinite(ratio_df$ratio)] <- 1
+
     # find which taxa to remove (first N taxa at or below max.ratio)
     first_consecutive <- function(x) {
       if (length(x) <= 1) return(x)
