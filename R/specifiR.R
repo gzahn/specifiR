@@ -82,7 +82,10 @@ specifiR <-
     warning("Looks like you have relative abundance data. Redo this with raw count data.")
   }
   if(max(comm) == 1){
-    warning("Looks like you have presence/absence data. Redo this with raw count data.")
+    warning("Looks like you have presence/absence data. Results are invalid! Redo this with raw count data.")
+    proceed <- readline(prompt = "You seem to be using presence/absence data. Results will be invalid. Proceed anyway? Yes or No?")
+    if(proceed != "Yes"){stop("Smart move. Come back with raw observation counts.")}
+    if(proceed == "Yes"){message("Results will be invalid, but you probably have your reasons...")}
   }
   # check if data appear to be rarefied
   if(length(unique(rowSums(comm))) == 1){
