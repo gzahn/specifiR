@@ -29,7 +29,9 @@ Depends on:
 
 ## Citation
 
-(Link to publication)
+[![DOI](https://zenodo.org/badge/1016289767.svg)](https://doi.org/10.5281/zenodo.16095120)
+
+Zahn, G., & Neat, A. (2025). gzahn/specifiR: Beta release (Version 0.0.0) [Computer software]. Zenodo. https://doi.org/10.5281/ZENODO.16095121
 
 
 
