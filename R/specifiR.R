@@ -18,6 +18,7 @@
 #' @param pval.cutoff Positive numeric of length 1, between 0 and 1. The P-value cutoff for significance. Default = 0.05.
 #' @param max.ratio The maximum ratio of significant:insignificant P-values within a group to indicate removal. Taxa with fidelity to groups at or less than this value will be removed. Only the first N occurence groups that have this value or lower will be flagged for taxon removal. Default = 0. You are unlikely to want to change this value.
 #' @param ovp.plot Logical. Should a plot of occupancy vs. p-values be generated? Default = FALSE.
+#' @param rm.rare.taxa Logical. Should rare taxa be removed before the CWM? Default = TRUE. Set to FALSE if you want to perform the Community Weighted Mean analysis on all taxa.
 #'
 #' @return Named List. This returns a list with 5 elements:
 #' community_specificity_index = The main result showing community weighted mean indicator values for each sample;
@@ -50,7 +51,8 @@ specifiR <-
            n.perm=999,
            pval.cutoff=0.05,
            max.ratio=0,
-           ovp.plot=FALSE){
+           ovp.plot=FALSE,
+           rm.rare.taxa=TRUE){
 
   # TESTS ####
 
@@ -61,6 +63,7 @@ specifiR <-
 
   # cross-platform parallelism
   plan(multisession)
+  set.seed(seed)
 
   # helper operator
   '%ni%' <- Negate("%in%")
@@ -267,10 +270,12 @@ specifiR <-
   }
 
   to_remove <- which(ratio_df$ratio <= max.ratio) %>% first_consecutive()
+  if(to_remove[1] > 1) {
+    warning("No rare taxa detected for removal prior to CWM analysis.")
+  }
 
-  cat(paste0("Removed taxa present in ",max(to_remove)," sites or fewer."))
   # OPTIONAL OCCUPANCY VS P.VALUE PLOT ####
-  if(ovp.plot){
+  if(ovp.plot & to_remove[1] == 1){
     p <-
       indicator_results %>%
       ggplot(aes(x=occurrence,y=p.value,color=iv.max)) +
@@ -287,18 +292,27 @@ specifiR <-
     print(p)
   }
 
-  # subset indicator results
-  isa_subset <-
-    indicator_results %>%
-    dplyr::filter(occurrence %ni% to_remove)
+  if(rm.rare.taxa){
+    # subset indicator results
+    isa_subset <-
+      indicator_results %>%
+      dplyr::filter(occurrence %ni% to_remove)
 
-  # subset comm table to match
-  comm_subset <-
-    comm[,colnames(comm) %in% isa_subset$comm_name]
+    # subset comm table to match
+    comm_subset <-
+      comm[,colnames(comm) %in% isa_subset$comm_name]
 
-  # find taxa that were removed due to rarity
-  starting_taxa <- names(comm)[names(comm) != "group"]
-  removed_taxa <- starting_taxa[starting_taxa %ni% names(comm_subset)]
+    # find taxa that were removed due to rarity
+    starting_taxa <- names(comm)[names(comm) != "group"]
+    removed_taxa <- starting_taxa[starting_taxa %ni% names(comm_subset)]
+    cat(paste0("Removed taxa present in ",max(to_remove)," sites or fewer."))
+  } else {
+    isa_subset <- indicator_results
+    comm_subset <- comm
+    comm$group <- NULL
+    comm_subset$group <- NULL
+    removed_taxa <- NA
+  }
 
   # calculate taxon index (so bigger indicates more indicative)
   isa_subset$taxon_index <- 1 - isa_subset$p.value
