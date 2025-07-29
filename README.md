@@ -36,3 +36,28 @@ Zahn, G., & Neat, A. (2025). gzahn/specifiR: Beta release (Version 0.0.0) [Compu
 
 
 ## Example usage
+
+### load specifiR
+library(specifiR)
+
+### LOAD DATA ####
+otu <- readRDS("./data/soils_otu_low_24.rds")
+groups <- readRDS("./data/soils_env_low_24.rds") %>% pluck("species")
+ps <- readRDS("./data/example_physeq.RDS")
+
+### USE FUNCTION ####
+out <- specifiR(comm = otu,
+                groups = groups,
+                seed = 123,
+                n.perm = 999,
+                pval.cutoff = 0.05,
+                max.ratio = 0,
+                ovp.plot = TRUE,
+                rm.rare.taxa = TRUE)
+
+### EXAMINE OUTPUT ####
+out$community_specificity_index
+out$taxon_specificity_index
+out$isa_results
+out$process_summary
+out$removed_taxa
