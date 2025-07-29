@@ -11,7 +11,8 @@ specifiR_physeq(
   n.perm = 999,
   pval.cutoff = 0.05,
   max.ratio = 0,
-  ovp.plot = FALSE
+  ovp.plot = FALSE,
+  rm.rare.taxa = TRUE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ specifiR_physeq(
 \item{max.ratio}{The maximum ratio of significant:insignificant P-values within a group to indicate removal. Taxa with fidelity to groups at or less than this value will be removed. Only the first N occurence groups that have this value or lower will be flagged for taxon removal. Default = 0. You are unlikely to want to change this value.}
 
 \item{ovp.plot}{Logical. Should a plot of occupancy vs. p-values be generated? Default = FALSE.}
+
+\item{rm.rare.taxa}{Logical. Should rare taxa be removed before the CWM? Default = TRUE. Set to FALSE if you want to perform the Community Weighted Mean analysis on all taxa.}
 }
 \value{
 Named List. This returns a list with 5 elements:
@@ -40,7 +43,7 @@ removed_taxa = Character vector with names of taxa removed due to rarity.
 \description{
 Abbey describe what the method does
 Subsequent lines for long description.
-This version of the package is a convenience wrapper for phyloseq users.
+This version of the function is a convenience wrapper for phyloseq users.
 }
 \details{
 This function implements the "Community Weighted Mean Indicator" Analysis for quantifying group specificity of entire communities.
