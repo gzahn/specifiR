@@ -66,4 +66,4 @@ out$removed_taxa
 
 ## Detailed description of methods
 
-<img src="https://github.com/gzahn/specifiR/tree/main//methods_poster.png" width="200"/>
+<img src="https://github.com/gzahn/specifiR/blob/main/assets/methods_poster.png" width="200"/>
