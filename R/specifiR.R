@@ -78,6 +78,10 @@ specifiR <-
   # try to convert comm to data.frame
   comm <- as(comm,"data.frame")
   if(class(comm) != "data.frame"){
+    if(class(comm) == "matrix"){
+      comm <- comm %>% as.data.frame()
+      warning("comm was converted from a matrix into a data.frame")
+    }
     stop("Community matrix must be coercible to a data.frame object.")
   }
   # check that community data is raw counts
