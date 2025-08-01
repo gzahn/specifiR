@@ -63,3 +63,7 @@ out$process_summary
 out$removed_taxa
 
 ```
+
+## Detailed description of methods
+
+<img src="https://github.com/gzahn/specifiR/tree/main//methods_poster.png" width="200"/>
