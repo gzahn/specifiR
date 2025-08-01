@@ -4,10 +4,11 @@
 
 (Replace with better hex sticker...)
 
-The goal of SpecifiR is to provide a user-friendly tool to quantify and compare the host specificity of microbial communities.
-Our method integrates the Indicator Species Analysis (ISA) with a Community Weighted Mean (CWM) analysis and has three steps. First, a specificity
-value is assigned to each taxon with the ISA. Second, a threshold is established for removing rare taxa. Third, a CWM is performed with all taxa that meet the rare taxa threshold to generate community level indices. The resulting indices
-can be used to compare the specificity of microbial communities associated with certain hosts or groups (i.e. treatments, environments) in a data set.
+The goal of SpecifiR is to provide a user-friendly tool to quantify and compare the host specificity of microbial communities. 
+Our method is a three step analysis that integrates the Indicator Species Analysis (ISA) with a Community Weighted Mean (CWM) analysis. 
+First, a specificity value is assigned to each taxon through the ISA. Second, a threshold is established for removing rare taxa. 
+Third, community level indices are generated through a CWM analysis using all taxa that meet the rare taxa threshold. 
+The resulting indices can be used to compare the specificity of microbial communities associated with certain hosts or groups (i.e. treatments, environments) in a data set.
 
 
 ## Installation:
