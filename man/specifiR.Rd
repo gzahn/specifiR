@@ -41,7 +41,7 @@ process_summary = Reports basic info on process, including the number of taxa re
 removed_taxa = Character vector with names of taxa removed due to rarity.
 }
 \description{
-Abbey describe what the method does
+sadljkvlaskjdfh;aslkdfjv;laskda;skvn;alsdkvnals;vknsa;lsvkd
 Subsequence lines for long description
 }
 \details{

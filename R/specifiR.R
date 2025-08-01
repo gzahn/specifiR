@@ -1,6 +1,6 @@
 #' Quantify group specificity of entire communities for each sample
 #'
-#' Abbey describe what the method does
+#' sadljkvlaskjdfh;aslkdfjv;laskda;skvn;alsdkvnals;vknsa;lsvkd
 #' Subsequence lines for long description
 #'
 #'
