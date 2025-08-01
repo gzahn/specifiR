@@ -15,7 +15,7 @@
 #' @param seed Numeric of length 1. Random seed for reproducibility. Default = 666.
 #' @param n.perm Positive numeric (integer) of length 1. Number of permutations for Monte Carlo permutation test. Default = 999.
 #' @param pval.cutoff Positive numeric of length 1, between 0 and 1. The P-value cutoff for significance, and is used to determine thresholds for removing rare taxa. Default = 0.05.
-#' @param max.ratio The maximum ratio of significant:insignificant P-values within a group. Taxa are first grouped into number of samples in which they occur. Groups of rare taxa are defined as those in which all taxa are too rare to have a significant p-value from the ISA.Only the first N occurrence groups that have this value or lower will be flagged for rare taxon removal. Default = 0. You are unlikely to want to change this value.
+#' @param max.ratio The maximum ratio of significant:insignificant P-values within a group. Taxa are grouped by the number of samples in which they occur. Groups in which no taxa have a significant p-value from the ISA will be flagged as a group of rare taxa. Only the first N occurrence groups that have this value or lower will be flagged for rare taxon removal. Default = 0. You are unlikely to want to change this value.
 #' @param ovp.plot Logical. Should a plot of occupancy vs. p-values be generated? This will visualize the max.ratio cutoff for rare taxa removal. Default = FALSE.
 #' @param rm.rare.taxa Logical. Should rare taxa be removed before the CWM? Default = TRUE. Set to FALSE if you want to perform the Community Weighted Mean analysis on all taxa.
 #'
