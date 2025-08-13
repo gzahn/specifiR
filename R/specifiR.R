@@ -313,7 +313,9 @@ specifiR <-
     # find taxa that were removed due to rarity
     starting_taxa <- names(comm)[names(comm) != "group"]
     removed_taxa <- starting_taxa[starting_taxa %ni% names(comm_subset)]
-    cat(paste0("Removed taxa present in ",max(to_remove)," sites or fewer."))
+    if(!to_remove[1] > 1){
+      cat(paste0("Removed taxa present in ",max(to_remove)," sites or fewer."))
+    }
   } else {
     isa_subset <- indicator_results
     comm_subset <- comm
